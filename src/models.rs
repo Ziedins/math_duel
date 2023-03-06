@@ -23,7 +23,8 @@ pub struct Game {
     pub name: String,
     pub user_a_id: String,
     pub user_b_id: String,
-    pub goal: f32,
+    pub goal_a: f32,
+    pub goal_b: f32,
     pub current_value: f32,
     pub created_at: String,
 }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Avatar from "./avatar";
 
 async function getGames() {
     try {
@@ -24,7 +25,6 @@ async function getGamesByUser(userId) {
 
 function GameListItem({ onSelect, game, userId, index, selectedItem }) {
     const { users, created_at, last_message } = game;
-    console.log(game);
     const active = index == selectedItem;
     const date = new Date(created_at);
     const ampm = date.getHours() >= 12 ? 'PM' : 'AM';
@@ -40,6 +40,7 @@ function GameListItem({ onSelect, game, userId, index, selectedItem }) {
             className={`${active ? 'bg-[#FDF9F0] border border-[#DEAB6C]' : 'bg-[#FAF9FE] border border-[#FAF9FE]'} p-2 rounded-[10px] shadow-sm cursor-pointer`} >
             <div className='flex justify-between items-center gap-3'>
                 <div className='flex gap-3 items-center w-full'>
+                    <Avatar>{game_name}</Avatar>
                     <div className="w-full max-w-[150px]">
                         <h2 className='font-semibold text-sm text-gray-500'>{game_name}</h2>
                         <h3 className='font-semibold text-sm text-gray-700'>{user_a_name} vs {user_b_name}</h3>
@@ -54,13 +55,12 @@ function GameListItem({ onSelect, game, userId, index, selectedItem }) {
     )
 }
 
-export default function GameList({ onChatChange, userId}) {
+export default function GameList({ onGameChange, userId}) {
    
     if(userId == undefined) return;
     const [data, setData] = useState([])
     const [isLoading, setLoading] = useState(false)
     const [selectedItem, setSelectedItem] = useState(-1);
-   
     useEffect(() => {
         setLoading(true)
             getGamesByUser(userId)
@@ -70,12 +70,13 @@ export default function GameList({ onChatChange, userId}) {
             })
     }, [])
 
-    const onSelectedChat = (idx, item) => {
+    const onSelectedGame = (idx, item) => {
         setSelectedItem(idx)
         let mapUsers = new Map();
         item.users.forEach(el => {
             mapUsers.set(el.id, el);
         });
+        console.log(item);
         const users = {
             get: (id) => {
                 return mapUsers.get(id).username;
@@ -84,7 +85,18 @@ export default function GameList({ onChatChange, userId}) {
                 return item.users.filter(el => el.id != id).map(el => el.username).join("")
             }
         }
-        onChatChange({ ...item.game, users })
+
+        const userGoals = {
+            get: (id) => {
+                if(item.game.user_a_id === id) {
+                    return item.game.goal_a;
+                } else {
+                    return item.game.goal_b;
+                }
+            }
+        }
+
+        onGameChange({ ...item.game, users, userGoals })
     }
 
     return (
@@ -94,7 +106,7 @@ export default function GameList({ onChatChange, userId}) {
             {
                 data.map((item, index) => {
                     return <GameListItem
-                        onSelect={(idx) => onSelectedChat(idx, item)}
+                        onSelect={(idx) => onSelectedGame(idx, item)}
                         game={{ ...item.game, users: item.users }}
                         index={index}
                         key={item.game.id}

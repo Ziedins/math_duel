@@ -129,6 +129,7 @@ pub fn find_games_by_user_id(conn: &mut SqliteConnection, user_id: Uuid) -> Resu
     let users_data: Vec<User> = users::table
         .filter(users::id.eq_any(ids))
         .get_results(conn)?;
+    println!("games for {user_id}, games users: {:?},games: {:?}", users_data, games_data);
 
     let users_map: HashMap<String, User> = HashMap::from_iter(
         users_data

@@ -170,9 +170,7 @@ pub async fn get_games_by_user(
     pool: web::Data<DbPool>,
     id_input: web::Path<Uuid>,
 ) -> Result<HttpResponse, Error> {
-    println!("test");
     let user_id = id_input.to_owned();
-    println!("Username : {}", id_input.to_string());
     let games = web::block(move || {
         let mut conn = pool.get()?;
         db::find_games_by_user_id(&mut conn, user_id)
@@ -181,6 +179,5 @@ pub async fn get_games_by_user(
     .map_err(actix_web::error::ErrorInternalServerError)?;
     
 
-    println!("Games found: {:?}", games);
     Ok(HttpResponse::Ok().json(games))
   }
