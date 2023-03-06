@@ -109,6 +109,7 @@ pub fn find_games_by_user_id(conn: &mut SqliteConnection, user_id: Uuid) -> Resu
 
     let games_data: Vec<Game> = games::table
     .filter(games::user_a_id.eq(user.id.clone()))
+    .or_filter(games::user_b_id.eq(user.id.clone()))
     .load(conn)?;
     let mut ids = HashSet::new();
     let mut games_map = HashMap::new();

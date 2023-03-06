@@ -14,7 +14,6 @@ async function getGames() {
 async function getGamesByUser(userId) {
     try {
         const url = "http://localhost:8080/games/user/" + userId;
-        console.log(url);
         let result = await fetch(url);
         return result.json();
     } catch (e) {
@@ -25,11 +24,15 @@ async function getGamesByUser(userId) {
 
 function GameListItem({ onSelect, game, userId, index, selectedItem }) {
     const { users, created_at, last_message } = game;
+    console.log(game);
     const active = index == selectedItem;
     const date = new Date(created_at);
     const ampm = date.getHours() >= 12 ? 'PM' : 'AM';
     const time = `${date.getHours()}:${date.getMinutes()} ${ampm}`
     const name = users?.filter(user => user.id != userId).map(user => user.username)[0];
+    const user_a_name = users[0].username;
+    const user_b_name = users[1].username;
+    const game_name = game.name;
 
     return (
         <div
@@ -38,7 +41,8 @@ function GameListItem({ onSelect, game, userId, index, selectedItem }) {
             <div className='flex justify-between items-center gap-3'>
                 <div className='flex gap-3 items-center w-full'>
                     <div className="w-full max-w-[150px]">
-                        <h3 className='font-semibold text-sm text-gray-700'>{name}</h3>
+                        <h2 className='font-semibold text-sm text-gray-500'>{game_name}</h2>
+                        <h3 className='font-semibold text-sm text-gray-700'>{user_a_name} vs {user_b_name}</h3>
                         <p className='font-light text-xs text-gray-600 truncate'>{last_message}</p>
                     </div>
                 </div>
@@ -57,8 +61,6 @@ export default function GameList({ onChatChange, userId}) {
     const [isLoading, setLoading] = useState(false)
     const [selectedItem, setSelectedItem] = useState(-1);
    
-    console.log(userId);
-
     useEffect(() => {
         setLoading(true)
             getGamesByUser(userId)
