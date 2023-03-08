@@ -108,7 +108,6 @@ export default function Home() {
   }
 
   useEffect(() => setShowLogIn(!auth), [auth])
-  console.log(game);
   return (
     <div>
       <Head>
@@ -134,7 +133,7 @@ export default function Home() {
               <hr className='bg-[#F0EEF5]' />
             </div>
             {(isLoading && game.id) && <p className="px-4 text-slate-500">Loading game...</p>}
-            <GameBoard auth={auth} moves={moves} users={game.users} userGoals={game.userGoals} />
+            <GameBoard auth={auth} moves={moves} game={game}/>
             <div className='w-full'>
               <form onSubmit={submitMessage} className='flex gap-2 items-center rounded-full border border-violet-500 bg-violet-200 p-1 m-2'>
                 <input
