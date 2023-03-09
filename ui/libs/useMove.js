@@ -13,19 +13,19 @@ const fetchGameData = async (game_id) => {
 
 export default function useMoves(game_id) {
     const [isLoading, setIsLoading] = useState(true);
-    const [messages, setMessages] = useState([]);
+    const [moves, setMoves] = useState([]);
 
-    const updateMessages = (resp = []) => {
+    const updateMoves = (resp = []) => {
         setIsLoading(false);
-        setMessages(resp)
+        setMoves(resp)
     }
 
     const fetchMoves = (id) => {
         setIsLoading(true)
-        fetchGameData(id).then(updateMessages)
+        fetchGameData(id).then(updateMoves)
     }
 
     useEffect(() => fetchMoves(game_id), []);
 
-    return [isLoading, messages, setMessages, fetchMoves];
+    return [isLoading, moves, setMoves, fetchMoves];
 }

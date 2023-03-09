@@ -180,4 +180,13 @@ pub async fn get_games_by_user(
     
 
     Ok(HttpResponse::Ok().json(games))
-  }
+}
+
+#[get("/games/cards")]
+pub async fn get_cards(
+
+) -> Result<HttpResponse, Error> {
+    let cards = vec!["-10", "*2", "/2", "+5", "ˆ2"];
+
+    Ok(HttpResponse::Ok().json(cards))
+}

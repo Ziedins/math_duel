@@ -8,7 +8,7 @@ function GoalNumber({auth, userGoals}) {
   return (
         <div className='w-28 p-4 space-y-4 overflow-auto'>
           <div className='bg-green-500 p-2 rounded-xl text-sm'>
-            <p class="text-white">Your goal is : {user_goal}</p>
+            <p className="text-white">Your goal is : {user_goal}</p>
           </div>
         </div>
   )
