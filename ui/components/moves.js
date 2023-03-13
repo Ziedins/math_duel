@@ -31,7 +31,7 @@ export default function MovesHistory({ moves, auth, users }) {
     }, [moves]);
 
     return (
-        <div className='w-28 border-r-1  p-4 space-y-4 overflow-auto' ref={ref}>
+        <div className='w-28 border-r  p-4 space-y-4 overflow-auto' ref={ref}>
             {
                 moves.map(item => {
                     return <Move

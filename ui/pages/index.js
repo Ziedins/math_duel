@@ -4,24 +4,18 @@ import Avatar from '../components/avatar'
 import GameList from '../components/game'
 import GameBoard from '../components/gameBoard'
 import Login from '../components/login'
+import CardHand from '../components/cards' 
 import useMoves from '../libs/useMove'
 import useLocalStorage from '../libs/useLocalStorage'
 import useWebsocket from '../libs/useWebsocket'
+import useCards from '../libs/useCard'
 
 export default function Home() {
   const [game, setSelectedGame] = useState(null);
-  //const [isTyping, setIsTyping] = useState(false);
   const [showLogIn, setShowLogIn] = useState(false);
   const [auth, setAuthUser] = useLocalStorage("user", false);
   const [isLoading, moves, setMoves, fetchMoves] = useMoves("");
-
-  const handleTyping = (mode) => {
-    if (mode === "IN") {
-      setIsTyping(true)
-    } else {
-      setIsTyping(false)
-    }
-  }
+  const [isCardsLoading, cards, setCards, fetchCards] = useCards("");
 
   const handleMessage = (msg, userId) => {
     setMessages(prev => {
@@ -99,6 +93,7 @@ export default function Home() {
   const updateGame = (data) => {
     if (!data.id) return;
     fetchMoves(data.id)
+    fetchCards()
     setSelectedGame(data)
   }
 
@@ -106,7 +101,7 @@ export default function Home() {
     window.localStorage.removeItem("user");
     setAuthUser(false);
   }
-
+    
   useEffect(() => setShowLogIn(!auth), [auth])
   return (
     <div>
@@ -134,17 +129,7 @@ export default function Home() {
             </div>
             {(isLoading && game.id) && <p className="px-4 text-slate-500">Loading game...</p>}
             <GameBoard auth={auth} moves={moves} game={game}/>
-            <div className='w-full'>
-              <form onSubmit={submitMessage} className='flex gap-2 items-center rounded-full border border-violet-500 bg-violet-200 p-1 m-2'>
-                <input
-                  onBlur={onFocusChange}
-                  onFocus={updateFocus}
-                  name="message"
-                  className='p-2 placeholder-gray-600 text-sm w-full rounded-full bg-violet-200 focus:outline-none'
-                  placeholder='Your move ...' />
-                <button type='submit' className='bg-violet-500 rounded-full py-2 px-6 font-semibold text-white text-sm'>Sent</button>
-              </form>
-            </div>
+            <CardHand cards={cards} />
           </section>)}
         </main>
       </div>

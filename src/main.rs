@@ -50,6 +50,7 @@ async fn main() -> std::io::Result<()> {
             .service(routes::get_move_by_id)
             .service(routes::get_games)
             .service(routes::get_games_by_user)
+            .service(routes::get_cards)
             .service(Files::new("/", "./static"))
     })
     .workers(2)

@@ -71,6 +71,7 @@ export default function GameList({ onGameChange, userId}) {
     }, [])
 
     const onSelectedGame = (idx, item) => {
+        console.log(idx,item);
         setSelectedItem(idx)
         let mapUsers = new Map();
         item.users.forEach(el => {
