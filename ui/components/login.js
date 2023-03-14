@@ -85,7 +85,7 @@ export default function Login({ show, setAuth }) {
             }
 
             if (!res.id) {
-                alert(`User not found ${username}`);
+                alert(`User not found ${user}`);
                 return;
             }
 

@@ -190,3 +190,14 @@ pub async fn get_cards(
 
     Ok(HttpResponse::Ok().json(cards))
 }
+
+#[post("/games/{uid}/move")]
+pub async fn make_move(
+pool: web::Data<DbPool>,
+form: web::Json<models::NewMove>,
+) -> Result<HttpResponse, Error> {
+    let cards = vec!["-10", "*2", "/2", "+5", "ˆ2"];
+
+    Ok(HttpResponse::Ok().json(cards))
+}
+

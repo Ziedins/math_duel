@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-export default function useWebsocket(onMessage) {
+export default function useWebsocket(onMove) {
     const ws = useRef(null);
 
     useEffect(() => {
@@ -19,14 +19,14 @@ export default function useWebsocket(onMessage) {
     useEffect(() => {
         if (!ws.current) return;
         ws.current.onmessage = e => {
-            onMessage(e.data)
+            onMove(e.data)
         };
     }, []);
 
-    const sendMessage = (msg) => {
+    const sendMove = (move) => {
         if (!ws.current) return;
-        ws.current.send(msg);
+        ws.current.send(move);
     }
 
-    return sendMessage;
+    return sendMove;
 }

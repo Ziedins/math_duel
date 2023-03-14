@@ -4,7 +4,7 @@ import Avatar from '../components/avatar'
 import GameList from '../components/game'
 import GameBoard from '../components/gameBoard'
 import Login from '../components/login'
-import CardHand from '../components/cards' 
+import CardHand from '../components/cards'
 import useMoves from '../libs/useMove'
 import useLocalStorage from '../libs/useLocalStorage'
 import useWebsocket from '../libs/useWebsocket'
@@ -17,32 +17,24 @@ export default function Home() {
   const [isLoading, moves, setMoves, fetchMoves] = useMoves("");
   const [isCardsLoading, cards, setCards, fetchCards] = useCards("");
 
-  const handleMessage = (msg, userId) => {
-    setMessages(prev => {
-      const item = { content: msg, user_id: userId };
+  const handleMove = (move, userId) => {
+    setMoves(prev => {
+      const item = { content: move, user_id: userId };
       return [...prev, item];
     })
   }
 
-  const onMessage = (data) => {
+  const onMove = (data) => {
     try {
-      let messageData = JSON.parse(data);
-      switch (messageData.chat_type) {
-        case "TYPING": {
-          handleTyping(messageData.value[0]);
-          return;
-        }
-        case "TEXT": {
-          handleMessage(messageData.value[0], messageData.user_id);
-          return;
-        }
-      }
+      let moveData = JSON.parse(data);
+      handleMove(moveData.value, moveData.user_id);
+      return;
     } catch (e) {
       console.log(e);
     }
   }
 
-  const sendMessage = useWebsocket(onMessage)
+  const sendMove = useWebsocket(onMove)
   const updateFocus = () => {
     const data = {
       id: 0,
@@ -65,29 +57,24 @@ export default function Home() {
     sendMessage(JSON.stringify(data))
   }
 
-  const submitMessage = (e) => {
-    e.preventDefault();
-    let message = e.target.message.value;
-    if (message === "") {
+  const makeMove = (move) => {
+    if (!move) {
       return;
     }
 
     if (!game.id) {
-      alert("Please select game room!")
-      return
+      alert("Please select a game!");
+      return;
     }
 
     const data = {
-      id: 0,
-      chat_type: "TEXT",
-      value: [message],
+      value: move,
       game_id: game.id,
       user_id: auth.id
     }
-    sendMessage(JSON.stringify(data))
-    e.target.message.value = "";
-    handleMessage(message, auth.id);
-    onFocusChange();
+
+    sendMove(JSON.stringify(data));
+    handleMove(move, auth.id);
   }
 
   const updateGame = (data) => {
@@ -101,8 +88,9 @@ export default function Home() {
     window.localStorage.removeItem("user");
     setAuthUser(false);
   }
-    
+
   useEffect(() => setShowLogIn(!auth), [auth])
+
   return (
     <div>
       <Head>
@@ -129,7 +117,7 @@ export default function Home() {
             </div>
             {(isLoading && game.id) && <p className="px-4 text-slate-500">Loading game...</p>}
             <GameBoard auth={auth} moves={moves} game={game}/>
-            <CardHand cards={cards} />
+            <CardHand useCard={makeMove} cards={cards}/>
           </section>)}
         </main>
       </div>

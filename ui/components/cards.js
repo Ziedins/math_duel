@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 function Card({onSelect, value, index}) {
     return (
         <div 
-        onClick={() => onSelect(index, value)}
+        onClick={() => onSelect(value)}
         className='w-12 m-2 p-2 border-2 bg-blue-500 rounded-xl cursor-pointer  border-blue-300'>
           <p className='text-white'>{value}</p>
         </div>
@@ -12,13 +12,9 @@ function Card({onSelect, value, index}) {
 
 
 
-export default function cardHand({cards}) {
+export default function cardHand({useCard, cards}) {
   const [data, setData] = useState([])
   const [isLoading, setLoading] = useState(false)
-
-  const onSelectedCard = (idx, item) => {
-    console.log(idx, item);
-  }
 
   return(
     <div className='w-full flex justify-center'>
@@ -27,7 +23,7 @@ export default function cardHand({cards}) {
         {
             cards.map((item, index) => {
               return <Card
-                onSelect={(idx) => onSelectedCard(idx, item)}
+                onSelect={(idx) => useCard(item)}
                 value={item}
                 index={index}
               />
