@@ -129,7 +129,6 @@ pub fn find_games_by_user_id(conn: &mut SqliteConnection, user_id: Uuid) -> Resu
     let users_data: Vec<User> = users::table
         .filter(users::id.eq_any(ids))
         .get_results(conn)?;
-    println!("games for {user_id}, games users: {:?},games: {:?}", users_data, games_data);
 
     let users_map: HashMap<String, User> = HashMap::from_iter(
         users_data
@@ -168,7 +167,7 @@ pub fn insert_new_move(
     new: NewMove,
 ) -> Result<Move, DbError> {
     use crate::schema::moves::dsl::*;
-
+    //println!("new move : {:?}", new);
     let new_move = Move {
         id: Uuid::new_v4().to_string(),
         user_id: new.user_id,

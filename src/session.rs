@@ -28,7 +28,7 @@ pub struct WsMathDuelSession {
     pub db_pool: web::Data<DbPool>,
 }
 
-#[derive(PartialEq, Serialize, Deserialize)]
+#[derive(PartialEq, Serialize, Deserialize, Debug)]
 pub enum MathDuelType {
     STATUS,
     TYPING,
@@ -37,7 +37,7 @@ pub enum MathDuelType {
     DISCONNECT,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 struct MathDuelMove {
     pub math_duel_type: MathDuelType,
     pub value: Vec<String>,
@@ -102,6 +102,7 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WsMathDuelSession
             }
             ws::Message::Text(text) => {
                 let data_json = serde_json::from_str::<MathDuelMove>(&text.to_string());
+
                 if let Err(err) = data_json {
                     println!("{err}");
                     println!("Failed to parse message: {text}");
@@ -136,13 +137,14 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WsMathDuelSession
                         };
 
                         let mut conn = self.db_pool.get().unwrap();
-                        let new_conversation = NewMove {
+                        let new_move = NewMove {
                             user_id: input.user_id.to_string(),
                             game_id: input.game_id.to_string(),
                             value: input.value.join(""),
                         };
-                        let _ = db::insert_new_move(&mut conn, new_conversation);
+                        let _ = db::insert_new_move(&mut conn, new_move);
                         let msg = serde_json::to_string(&chat_msg).unwrap();
+                       // println!("chat_msg : {:?}", &input.user_id);
                         self.addr.do_send(server::ClientMove {
                             id: self.id,
                             value: msg,

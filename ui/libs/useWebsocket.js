@@ -6,13 +6,13 @@ export default function useWebsocket(onMove) {
     useEffect(() => {
         if (ws.current !== null) return;
         const wsUri = 'ws://localhost:8080/ws';
-        ws.current = new WebSocket(wsUri);
+        ws.current = new WebSocket(wsUri)
         ws.current.onopen = () => console.log("ws opened");
         ws.current.onclose = () => console.log("ws closed");
 
         const wsCurrent = ws.current;
         return () => {
-            wsCurrent.close();
+            //wsCurrent.close();
         };
     }, []);
 

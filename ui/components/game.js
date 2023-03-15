@@ -56,7 +56,7 @@ function GameListItem({ onSelect, game, userId, index, selectedItem }) {
 }
 
 export default function GameList({ onGameChange, userId}) {
-   
+
     if(userId == undefined) return ;//TODO short term fix for auth not loaded initally
     const [data, setData] = useState([])
     const [isLoading, setLoading] = useState(false)
@@ -78,7 +78,10 @@ export default function GameList({ onGameChange, userId}) {
             mapUsers.set(el.id, el);
         });
         const users = {
-            get: (id) => {
+            get: (id) =>
+            {
+                console.log(id);
+                console.log(mapUsers);
                 return mapUsers.get(id).username;
             },
             get_target_user: (id) => {

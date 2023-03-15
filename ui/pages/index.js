@@ -19,7 +19,7 @@ export default function Home() {
 
   const handleMove = (move, userId) => {
     setMoves(prev => {
-      const item = { content: move, user_id: userId };
+      const item = { value: move, user_id: userId };
       return [...prev, item];
     })
   }
@@ -68,7 +68,9 @@ export default function Home() {
     }
 
     const data = {
-      value: move,
+      id: 0,
+      math_duel_type: "TEXT",
+      value: [move],
       game_id: game.id,
       user_id: auth.id
     }
@@ -90,7 +92,6 @@ export default function Home() {
   }
 
   useEffect(() => setShowLogIn(!auth), [auth])
-
   return (
     <div>
       <Head>

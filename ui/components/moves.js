@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import Avatar from "./avatar"
 
-function Move({ isAuthor, value, username }) {
+function Move({ isAuthor, value}) {
     if (isAuthor) {
         return (
             <div className='w-full flex justify-end'>
@@ -25,11 +25,9 @@ function Move({ isAuthor, value, username }) {
 
 export default function MovesHistory({ moves, auth, users }) {
     const ref = useRef(null);
-
     useEffect(() => {
         ref.current?.scrollTo(0, ref.current.scrollHeight)
     }, [moves]);
-
     return (
         <div className='w-28 border-r  p-4 space-y-4 overflow-auto' ref={ref}>
             {
@@ -37,7 +35,7 @@ export default function MovesHistory({ moves, auth, users }) {
                     return <Move
                         isAuthor={item.user_id === auth.id}
                         value={item.value}
-                        username={users.get(item.user_id)}
+                        //username={users.get(item.user_id)}
                         key={item.id} />
                 })
             }

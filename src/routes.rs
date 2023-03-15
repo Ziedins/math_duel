@@ -105,7 +105,7 @@ pub async fn get_move_by_id(
         let res = HttpResponse::NotFound().body(
             json!({
                 "error": 404,
-                "message": format!("No conversation with game_id: {game_id}")
+                "message": format!("No moves with game_id: {game_id}")
             })
             .to_string(),
         );
@@ -177,7 +177,7 @@ pub async fn get_games_by_user(
     })
     .await?
     .map_err(actix_web::error::ErrorInternalServerError)?;
-    
+
 
     Ok(HttpResponse::Ok().json(games))
 }

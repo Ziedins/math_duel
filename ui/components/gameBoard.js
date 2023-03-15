@@ -35,14 +35,14 @@ function DebugPanel({game}) {
 }
 
 export default function GameBoard({auth, moves, game}) {
-  const users = game.users;
-  const userGoals = game.userGoals;
-  const initialNumber = game.current_value;
-  return (
-      <div className='flex w-full justify-between'>
+    const users = game.users;
+    const userGoals = game.userGoals;
+    const initialNumber = game.current_value;
+    return (
+        <div className='flex w-full justify-between'>
         <MovesHistory moves={moves} auth={auth} users={users} />
         <InitialNumber number={initialNumber} />
-        <GoalNumber auth={auth} userGoals={userGoals} game={game} />  
-      </div>
-  )
+        <GoalNumber auth={auth} userGoals={userGoals} game={game} />
+        </div>
+    )
 }

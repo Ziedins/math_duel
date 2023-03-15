@@ -4,6 +4,7 @@ const fetchCardData = async () => {
     const url = `http://localhost:8080/games/cards`;
     try {
         let resp = await fetch(url).then(res => res.json());
+        console.log(resp);
         return resp;
     } catch (e) {
         console.log(e);
