@@ -13,7 +13,8 @@ pub struct Move {
     pub id: String,
     pub game_id: String,
     pub user_id: String,
-    pub value: String,
+    pub operator: String,
+    pub term: String,
     pub created_at: String
 }
 
@@ -38,7 +39,8 @@ pub struct NewUser {
 pub struct NewMove {
     pub user_id: String,
     pub game_id: String,
-    pub value: String,
+    pub operator: String,
+    pub term: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

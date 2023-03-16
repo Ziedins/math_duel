@@ -10,7 +10,7 @@ use diesel::{
     r2d2::{self, ConnectionManager},
 };
 
-use crate::{db, schema::moves::value};
+use crate::db;
 use crate::models::NewMove;
 use crate::server;
 
@@ -40,7 +40,8 @@ pub enum MathDuelType {
 #[derive(Serialize, Deserialize, Debug)]
 struct MathDuelMove {
     pub math_duel_type: MathDuelType,
-    pub value: Vec<String>,
+    pub operator: String,
+    pub term: String,
     pub game_id: String,
     pub user_id: String,
     pub id: usize,
@@ -114,7 +115,8 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WsMathDuelSession
                     MathDuelType::TYPING => {
                         let chat_msg = MathDuelMove {
                             math_duel_type: MathDuelType::TYPING,
-                            value: input.value.to_vec(),
+                            operator: input.operator.to_string(),
+                            term: input.term.to_string(),
                             id: self.id,
                             game_id: input.game_id.to_string(),
                             user_id: input.user_id.to_string(),
@@ -130,7 +132,8 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WsMathDuelSession
                         let input = data_json.as_ref().unwrap();
                         let chat_msg = MathDuelMove {
                             math_duel_type: MathDuelType::TEXT,
-                            value: input.value.to_vec(),
+                            operator: input.operator.to_string(),
+                            term: input.term.to_string(),
                             id: self.id,
                             game_id: input.game_id.to_string(),
                             user_id: input.user_id.to_string(),
@@ -140,11 +143,11 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WsMathDuelSession
                         let new_move = NewMove {
                             user_id: input.user_id.to_string(),
                             game_id: input.game_id.to_string(),
-                            value: input.value.join(""),
+                            operator: input.operator.to_string(),
+                            term: input.term.to_string(),
                         };
                         let _ = db::insert_new_move(&mut conn, new_move);
                         let msg = serde_json::to_string(&chat_msg).unwrap();
-                       // println!("chat_msg : {:?}", &input.user_id);
                         self.addr.do_send(server::ClientMove {
                             id: self.id,
                             value: msg,

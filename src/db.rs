@@ -167,12 +167,13 @@ pub fn insert_new_move(
     new: NewMove,
 ) -> Result<Move, DbError> {
     use crate::schema::moves::dsl::*;
-    //println!("new move : {:?}", new);
+    println!("new move : {:?}", new);
     let new_move = Move {
         id: Uuid::new_v4().to_string(),
         user_id: new.user_id,
         game_id: new.game_id,
-        value: new.value,
+        operator: new.operator,
+        term: new.term,
         created_at: iso_date(),
     };
 

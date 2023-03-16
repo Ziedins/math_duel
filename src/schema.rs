@@ -18,7 +18,8 @@ diesel::table! {
         id -> Text,
         game_id -> Text,
         user_id -> Text,
-        value -> Text,
+        operator -> Text,
+        term -> Text,
         created_at -> Text,
     }
 }

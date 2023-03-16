@@ -1,13 +1,13 @@
 import React, { useEffect, useRef } from "react";
 import Avatar from "./avatar"
 
-function Move({ isAuthor, value}) {
+function Move({ isAuthor, operator, term}) {
     if (isAuthor) {
         return (
             <div className='w-full flex justify-end'>
                 <div className='flex gap-3 justify-end'>
                     <div className='bg-violet-500 p-3 text-sm rounded-xl rounded-br-none'>
-                        <p className='text-white'>{value}</p>
+                        <p className='text-white'>{operator}{term}</p>
                     </div>
                 </div>
             </div>
@@ -17,14 +17,15 @@ function Move({ isAuthor, value}) {
     return (
         <div className='flex gap-3 w-full'>
             <div className='bg-gray-200 p-3 text-sm rounded-xl rounded-bl-none'>
-                <p>{value}</p>
+                <p>{operator}{term}</p>
             </div>
         </div>
     )
 }
 
-export default function MovesHistory({ moves, auth, users }) {
+export default function MovesHistory({ moves, auth }) {
     const ref = useRef(null);
+    console.log(moves);
     useEffect(() => {
         ref.current?.scrollTo(0, ref.current.scrollHeight)
     }, [moves]);
@@ -34,8 +35,8 @@ export default function MovesHistory({ moves, auth, users }) {
                 moves.map(item => {
                     return <Move
                         isAuthor={item.user_id === auth.id}
-                        value={item.value}
-                        //username={users.get(item.user_id)}
+                        operator={item.operator}
+                        term = {item.term}
                         key={item.id} />
                 })
             }
