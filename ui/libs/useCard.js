@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 
-const fetchCardData = async () => {
-    const url = `http://localhost:8080/games/cards`;
+const fetchCardData = async (game_id) => {
+    if (!game_id) return;
+    const url = `http://localhost:8080/cards/game/${game_id}`;
     try {
         let resp = await fetch(url).then(res => res.json());
-        console.log(resp);
         return resp;
     } catch (e) {
         console.log(e);
     }
 }
 
-export default function useCards() {
+export default function useCards(game_id) {
     const [isLoading, setIsLoading] = useState(true);
     const [cards, setCards] = useState([]);
 
@@ -20,12 +20,12 @@ export default function useCards() {
         setCards(resp)
     }
 
-    const fetchCards = () => {
+    const fetchCards = (id) => {
         setIsLoading(true)
-        fetchCardData().then(updateCards)
+        fetchCardData(id).then(updateCards)
     }
 
-    useEffect(() => fetchCards(), []);
+    useEffect(() => fetchCards(game_id), []);
 
     return [isLoading, cards, setCards, fetchCards];
 }

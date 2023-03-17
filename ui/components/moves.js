@@ -25,7 +25,6 @@ function Move({ isAuthor, operator, term}) {
 
 export default function MovesHistory({ moves, auth }) {
     const ref = useRef(null);
-    console.log(moves);
     useEffect(() => {
         ref.current?.scrollTo(0, ref.current.scrollHeight)
     }, [moves]);

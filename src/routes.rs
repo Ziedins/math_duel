@@ -13,7 +13,7 @@ use diesel::{
 use serde_json::json;
 use uuid::Uuid;
 
-use crate::db;
+use crate::{db, models::Card};
 use crate::models;
 use crate::server;
 use crate::session;
@@ -178,16 +178,18 @@ pub async fn get_games_by_user(
     .await?
     .map_err(actix_web::error::ErrorInternalServerError)?;
 
-
+    println!("User games : {:?}", games);
     Ok(HttpResponse::Ok().json(games))
 }
 
-#[get("/games/cards")]
+#[get("/cards/game/{uid}")]
 pub async fn get_cards(
-
+game_id: web::Path<Uuid>,
 ) -> Result<HttpResponse, Error> {
-    let cards = vec!["-10", "*2", "/2", "+5", "ˆ2"];
-
+    let hand_size = 6;
+    let cards = Card::card_hand(hand_size, game_id.to_string());
+    //let card = Card::new_card(game_id.to_string());
+    println!("Generated cards : {:?} ", cards);
     Ok(HttpResponse::Ok().json(cards))
 }
 
@@ -197,7 +199,6 @@ pool: web::Data<DbPool>,
 form: web::Json<models::NewMove>,
 ) -> Result<HttpResponse, Error> {
     let cards = vec!["-10", "*2", "/2", "+5", "ˆ2"];
-
     Ok(HttpResponse::Ok().json(cards))
 }
 

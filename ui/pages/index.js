@@ -82,7 +82,7 @@ export default function Home() {
   const updateGame = (data) => {
     if (!data.id) return;
     fetchMoves(data.id)
-    fetchCards()
+    fetchCards(data.id)
     setSelectedGame(data)
   }
 
@@ -118,6 +118,7 @@ export default function Home() {
             </div>
             {(isLoading && game.id) && <p className="px-4 text-slate-500">Loading game...</p>}
             <GameBoard auth={auth} moves={moves} game={game}/>
+    console.log(moves);
             <CardHand useCard={makeMove} cards={cards}/>
           </section>)}
         </main>

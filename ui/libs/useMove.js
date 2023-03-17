@@ -17,6 +17,8 @@ export default function useMoves(game_id) {
 
     const updateMoves = (resp = []) => {
         setIsLoading(false);
+
+        console.log(resp);
         setMoves(resp)
     }
 

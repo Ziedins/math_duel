@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 
-function Card({onSelect, value, index}) {
+function Card({onSelect, card, index}) {
+    console.log(card);
     return (
-        <div 
+        <div
         onClick={() => onSelect(value)}
         className='w-12 m-2 p-2 border-2 bg-blue-500 rounded-xl cursor-pointer  border-blue-300'>
-          <p className='text-white'>{value}</p>
+          <p className='text-white'>{card.operator}{card.term}</p>
         </div>
     )
 }
@@ -24,7 +25,7 @@ export default function cardHand({useCard, cards}) {
             cards.map((item, index) => {
               return <Card
                 onSelect={(idx) => useCard(item)}
-                value={item}
+                card={item}
                 index={index}
               />
             })
