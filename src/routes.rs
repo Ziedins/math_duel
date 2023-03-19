@@ -178,7 +178,6 @@ pub async fn get_games_by_user(
     .await?
     .map_err(actix_web::error::ErrorInternalServerError)?;
 
-    println!("User games : {:?}", games);
     Ok(HttpResponse::Ok().json(games))
 }
 
@@ -188,17 +187,8 @@ game_id: web::Path<Uuid>,
 ) -> Result<HttpResponse, Error> {
     let hand_size = 6;
     let cards = Card::card_hand(hand_size, game_id.to_string());
-    //let card = Card::new_card(game_id.to_string());
-    println!("Generated cards : {:?} ", cards);
+
     Ok(HttpResponse::Ok().json(cards))
 }
 
-#[post("/games/{uid}/move")]
-pub async fn make_move(
-pool: web::Data<DbPool>,
-form: web::Json<models::NewMove>,
-) -> Result<HttpResponse, Error> {
-    let cards = vec!["-10", "*2", "/2", "+5", "ˆ2"];
-    Ok(HttpResponse::Ok().json(cards))
-}
 

@@ -86,3 +86,27 @@ impl Card {
     }
 }
 
+pub enum Operator {
+    Plus,
+    Minus,
+    Multiplication,
+    Division,
+    Exponentiation
+}
+
+impl Operator {
+
+    pub fn operator_from_string(symbol: &str) -> Operator
+    {
+        match symbol {
+            "+" => Operator::Plus,
+            "-" => Operator::Minus,
+            "*" => Operator::Multiplication,
+            "/" => Operator::Division,
+            "^" => Operator::Exponentiation,
+            _ => panic!("Non covered symbol provided, please provide one of theese symbols : +,-.*,/,^"),
+        }
+    }
+}
+
+

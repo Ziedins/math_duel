@@ -19,7 +19,7 @@ export default function Home() {
 
   const handleMove = (move, userId) => {
     setMoves(prev => {
-      const item = { value: move, user_id: userId };
+      const item = { operator: move.operator, term: move.term, user_id: userId };
       return [...prev, item];
     })
   }
@@ -27,7 +27,7 @@ export default function Home() {
   const onMove = (data) => {
     try {
       let moveData = JSON.parse(data);
-      handleMove(moveData.value, moveData.user_id);
+      handleMove(moveData, moveData.user_id);
       return;
     } catch (e) {
       console.log(e);
@@ -35,27 +35,7 @@ export default function Home() {
   }
 
   const sendMove = useWebsocket(onMove)
-  const updateFocus = () => {
-    const data = {
-      id: 0,
-      chat_type: "TYPING",
-      value: ["IN"],
-      game_id: game.id,
-      user_id: auth.id
-    }
-    sendMessage(JSON.stringify(data))
-  }
 
-  const onFocusChange = () => {
-    const data = {
-      id: 0,
-      chat_type: "TYPING",
-      value: ["OUT"],
-      game_id: game.id,
-      user_id: auth.id
-    }
-    sendMessage(JSON.stringify(data))
-  }
 
   const makeMove = (move) => {
     if (!move) {
@@ -70,7 +50,8 @@ export default function Home() {
     const data = {
       id: 0,
       math_duel_type: "TEXT",
-      value: [move],
+      operator: move.operator,
+      term: move.term,
       game_id: game.id,
       user_id: auth.id
     }
@@ -118,7 +99,6 @@ export default function Home() {
             </div>
             {(isLoading && game.id) && <p className="px-4 text-slate-500">Loading game...</p>}
             <GameBoard auth={auth} moves={moves} game={game}/>
-    console.log(moves);
             <CardHand useCard={makeMove} cards={cards}/>
           </section>)}
         </main>

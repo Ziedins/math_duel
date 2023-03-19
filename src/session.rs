@@ -41,7 +41,7 @@ pub enum MathDuelType {
 struct MathDuelMove {
     pub math_duel_type: MathDuelType,
     pub operator: String,
-    pub term: String,
+    pub term: i32,
     pub game_id: String,
     pub user_id: String,
     pub id: usize,
@@ -102,6 +102,7 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WsMathDuelSession
                 self.hb = Instant::now();
             }
             ws::Message::Text(text) => {
+                println!("text : {:?}", text);
                 let data_json = serde_json::from_str::<MathDuelMove>(&text.to_string());
 
                 if let Err(err) = data_json {
@@ -110,13 +111,14 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WsMathDuelSession
                     return;
                 }
 
+                println!("data json : {:?}", data_json);
                 let input = data_json.as_ref().unwrap();
                 match &input.math_duel_type {
                     MathDuelType::TYPING => {
                         let chat_msg = MathDuelMove {
                             math_duel_type: MathDuelType::TYPING,
                             operator: input.operator.to_string(),
-                            term: input.term.to_string(),
+                            term: input.term,
                             id: self.id,
                             game_id: input.game_id.to_string(),
                             user_id: input.user_id.to_string(),
@@ -133,7 +135,7 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WsMathDuelSession
                         let chat_msg = MathDuelMove {
                             math_duel_type: MathDuelType::TEXT,
                             operator: input.operator.to_string(),
-                            term: input.term.to_string(),
+                            term: input.term,
                             id: self.id,
                             game_id: input.game_id.to_string(),
                             user_id: input.user_id.to_string(),
