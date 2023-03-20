@@ -10,7 +10,7 @@ use diesel::{
     r2d2::{self, ConnectionManager},
 };
 
-use crate::db;
+use crate::{db, models::Operator};
 use crate::models::NewMove;
 use crate::server;
 
@@ -41,7 +41,7 @@ pub enum MathDuelType {
 struct MathDuelMove {
     pub math_duel_type: MathDuelType,
     pub operator: String,
-    pub term: i32,
+    pub term: f32,
     pub game_id: String,
     pub user_id: String,
     pub id: usize,
@@ -102,7 +102,6 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WsMathDuelSession
                 self.hb = Instant::now();
             }
             ws::Message::Text(text) => {
-                println!("text : {:?}", text);
                 let data_json = serde_json::from_str::<MathDuelMove>(&text.to_string());
 
                 if let Err(err) = data_json {
@@ -111,53 +110,32 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WsMathDuelSession
                     return;
                 }
 
-                println!("data json : {:?}", data_json);
                 let input = data_json.as_ref().unwrap();
-                match &input.math_duel_type {
-                    MathDuelType::TYPING => {
-                        let chat_msg = MathDuelMove {
-                            math_duel_type: MathDuelType::TYPING,
-                            operator: input.operator.to_string(),
-                            term: input.term,
-                            id: self.id,
-                            game_id: input.game_id.to_string(),
-                            user_id: input.user_id.to_string(),
-                        };
-                        let msg = serde_json::to_string(&chat_msg).unwrap();
-                        self.addr.do_send(server::ClientMove {
-                            id: self.id,
-                            value: msg,
-                            game: self.game.clone(),
-                        })
-                    }
-                    MathDuelType::TEXT => {
-                        let input = data_json.as_ref().unwrap();
-                        let chat_msg = MathDuelMove {
-                            math_duel_type: MathDuelType::TEXT,
-                            operator: input.operator.to_string(),
-                            term: input.term,
-                            id: self.id,
-                            game_id: input.game_id.to_string(),
-                            user_id: input.user_id.to_string(),
-                        };
+                let chat_msg = MathDuelMove {
+                    math_duel_type: MathDuelType::TEXT,
+                    operator: input.operator.to_string(),
+                    term: input.term,
+                    id: self.id,
+                    game_id: input.game_id.to_string(),
+                    user_id: input.user_id.to_string(),
+                };
 
-                        let mut conn = self.db_pool.get().unwrap();
-                        let new_move = NewMove {
-                            user_id: input.user_id.to_string(),
-                            game_id: input.game_id.to_string(),
-                            operator: input.operator.to_string(),
-                            term: input.term.to_string(),
-                        };
-                        let _ = db::insert_new_move(&mut conn, new_move);
-                        let msg = serde_json::to_string(&chat_msg).unwrap();
-                        self.addr.do_send(server::ClientMove {
-                            id: self.id,
-                            value: msg,
-                            game: self.game.clone(),
-                        })
-                    }
-                    _ => {}
-                }
+                let mut conn = self.db_pool.get().unwrap();
+                let new_move = NewMove {
+                    user_id: input.user_id.to_string(),
+                    game_id: input.game_id.to_string(),
+                    operator: input.operator.to_string(),
+                    term: input.term.to_string(),
+                };
+                let the_move = db::insert_new_move(&mut conn, new_move);
+                let _ = db::make_move_in_game(&mut conn, &the_move.unwrap());
+                let msg = serde_json::to_string(&chat_msg).unwrap();
+                self.addr.do_send(server::ClientMove {
+                    id: self.id,
+                    value: msg,
+                    game: self.game.clone(),
+                })
+
             }
             ws::Message::Binary(_) => println!("Unsupported binary"),
             ws::Message::Close(reason) => {

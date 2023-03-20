@@ -86,6 +86,7 @@ impl Card {
     }
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum Operator {
     Plus,
     Minus,

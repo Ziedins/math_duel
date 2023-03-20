@@ -1,11 +1,11 @@
 use chrono::{DateTime, Utc};
-use diesel::prelude::*;
+use diesel::{prelude::*, update};
 use std::{
     collections::{HashMap, HashSet},
     time::SystemTime,
 };
 use uuid::Uuid;
-use crate::models::{Move, NewMove, Game, GameResponse, User};
+use crate::models::{Move, NewMove, Game, GameResponse, User, Operator};
 
 type DbError = Box<dyn std::error::Error + Send + Sync>;
 
@@ -167,7 +167,6 @@ pub fn insert_new_move(
     new: NewMove,
 ) -> Result<Move, DbError> {
     use crate::schema::moves::dsl::*;
-    println!("new move : {:?}", new);
     let new_move = Move {
         id: Uuid::new_v4().to_string(),
         user_id: new.user_id,
@@ -182,4 +181,37 @@ pub fn insert_new_move(
         .execute(conn)?;
 
     Ok(new_move)
+}
+
+fn execute_equation(first_term: &f32, operator: &Operator, second_term: &f32) -> f32 {
+    match operator {
+        Operator::Plus => first_term + second_term,
+        Operator::Minus => first_term - second_term,
+        Operator::Multiplication => first_term * second_term,
+        Operator::Division => first_term / second_term,
+        Operator::Exponentiation => first_term / second_term
+    }
+}
+
+pub fn make_move_in_game(conn: &mut SqliteConnection, the_move: &Move) -> Result<Game, DbError> {
+    use crate::schema::games::dsl::*;
+    let the_game: Game = games
+        .filter(id.eq(&the_move.game_id))
+        .first(conn)
+        .unwrap();
+    let first_term = the_game.current_value;
+    let operator = Operator::operator_from_string(&the_move.operator);
+    let second_term: f32 = the_move.term.parse().unwrap();
+    let updated_value = execute_equation(&first_term, &operator, &second_term);
+
+    update(games.find(&the_move.game_id))
+        .set(current_value.eq(updated_value))
+        .execute(conn)?;
+
+    let updated_game: Game = games
+        .filter(id.eq(&the_move.game_id))
+        .first(conn)
+        .unwrap();
+
+    Ok(updated_game)
 }
