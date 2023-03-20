@@ -10,7 +10,7 @@ use diesel::{
     r2d2::{self, ConnectionManager},
 };
 
-use crate::{db, models::Operator};
+use crate::db;
 use crate::models::NewMove;
 use crate::server;
 
@@ -31,8 +31,7 @@ pub struct WsMathDuelSession {
 #[derive(PartialEq, Serialize, Deserialize, Debug)]
 pub enum MathDuelType {
     STATUS,
-    TYPING,
-    TEXT,
+    MOVE,
     CONNECT,
     DISCONNECT,
 }
@@ -112,7 +111,7 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WsMathDuelSession
 
                 let input = data_json.as_ref().unwrap();
                 let chat_msg = MathDuelMove {
-                    math_duel_type: MathDuelType::TEXT,
+                    math_duel_type: MathDuelType::MOVE,
                     operator: input.operator.to_string(),
                     term: input.term,
                     id: self.id,

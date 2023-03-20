@@ -4,7 +4,6 @@ import Avatar from '../components/avatar'
 import GameList from '../components/game'
 import GameBoard from '../components/gameBoard'
 import Login from '../components/login'
-import CardHand from '../components/cards'
 import useMoves from '../libs/useMove'
 import useLocalStorage from '../libs/useLocalStorage'
 import useWebsocket from '../libs/useWebsocket'
@@ -49,7 +48,7 @@ export default function Home() {
 
     const data = {
       id: 0,
-      math_duel_type: "TEXT",
+      math_duel_type: "MOVE",
       operator: move.operator,
       term: move.term,
       game_id: game.id,
@@ -87,7 +86,7 @@ export default function Home() {
             <GameList onGameChange={updateGame}  userId={auth.id} />
             <button onClick={signOut} className='text-xs w-full max-w-[295px] p-3 rounded-[10px] bg-violet-200 font-semibold text-violet-600 text-center absolute bottom-4'>LOG OUT</button>
           </aside>
-          {game?.id && (<section className='rounded-r-[25px] w-full max-w-[690px] grid grid-rows-[80px_minmax(450px,_1fr)_65px]'>
+          {game?.id && (<section className='rounded-r-[25px] w-full max-w-[690px] grid grid-rows-[80px_minmax(450px,_1fr)]'>
             <div className='rounded-tr-[25px] w-ful'>
               <div className='flex gap-3 p-3 items-center'>
                 <Avatar color='rgb(245 158 11)'>{game.users.get_target_user(auth.id)}</Avatar>
@@ -98,8 +97,7 @@ export default function Home() {
               <hr className='bg-[#F0EEF5]' />
             </div>
             {(isLoading && game.id) && <p className="px-4 text-slate-500">Loading game...</p>}
-            <GameBoard auth={auth} moves={moves} game={game}/>
-            <CardHand useCard={makeMove} cards={cards}/>
+            <GameBoard auth={auth} moves={moves} game={game} cards={cards} useCard={makeMove}/>
           </section>)}
         </main>
       </div>

@@ -76,6 +76,11 @@ export default function GameList({ onGameChange, userId}) {
         item.users.forEach(el => {
             mapUsers.set(el.id, el);
         });
+
+        const authUser = {
+            isTurn: userId == item.game.active_user_id
+        }
+
         const users = {
             get: (id) =>
             {
@@ -83,7 +88,8 @@ export default function GameList({ onGameChange, userId}) {
             },
             get_target_user: (id) => {
                 return item.users.filter(el => el.id != id).map(el => el.username).join("")
-            }
+            },
+
         }
 
         const userGoals = {
@@ -96,7 +102,8 @@ export default function GameList({ onGameChange, userId}) {
             }
         }
 
-        onGameChange({ ...item.game, users, userGoals })
+
+        onGameChange({ ...item.game, users, userGoals, authUser})
     }
 
     return (

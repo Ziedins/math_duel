@@ -193,6 +193,14 @@ fn execute_equation(first_term: &f32, operator: &Operator, second_term: &f32) ->
     }
 }
 
+fn get_next_active_user(active: &str, a: &str, b: &str) -> String {
+    if active == a {
+        b.to_string()
+    } else {
+        a.to_string()
+    }
+}
+
 pub fn make_move_in_game(conn: &mut SqliteConnection, the_move: &Move) -> Result<Game, DbError> {
     use crate::schema::games::dsl::*;
     let the_game: Game = games
@@ -204,8 +212,15 @@ pub fn make_move_in_game(conn: &mut SqliteConnection, the_move: &Move) -> Result
     let second_term: f32 = the_move.term.parse().unwrap();
     let updated_value = execute_equation(&first_term, &operator, &second_term);
 
+    let next_active_user = get_next_active_user(&the_game.active_user_id, &the_game.user_a_id, &the_game.user_b_id);
+
+
     update(games.find(&the_move.game_id))
         .set(current_value.eq(updated_value))
+        .execute(conn)?;
+
+    update(games.find(&the_move.game_id))
+        .set(active_user_id.eq(next_active_user))
         .execute(conn)?;
 
     let updated_game: Game = games

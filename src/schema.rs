@@ -6,9 +6,12 @@ diesel::table! {
         name -> Text,
         user_a_id -> Text,
         user_b_id -> Text,
+        active_user_id -> Text,
         goal_a -> Float,
         goal_b -> Float,
+        initial_value -> Float,
         current_value -> Float,
+        status -> Text,
         created_at -> Text,
     }
 }

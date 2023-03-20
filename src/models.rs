@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-use crate::schema::*;
+use crate::schema::{*, games::{user_a_id, user_b_id}};
 use rand::seq::SliceRandom;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Queryable, Insertable)]
@@ -20,16 +20,37 @@ pub struct Move {
     pub created_at: String
 }
 
+pub enum Status {
+    TurnA,
+    TurnB,
+    Over,
+    Other
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, Queryable, Insertable)]
 pub struct Game {
     pub id: String,
     pub name: String,
     pub user_a_id: String,
     pub user_b_id: String,
+    pub active_user_id: String,
     pub goal_a: f32,
     pub goal_b: f32,
+    pub initial_value: f32,
     pub current_value: f32,
+    pub status: String,
     pub created_at: String,
+}
+
+impl Game {
+    pub fn status_from_string(status_string: &str) -> Status {
+     match status_string {
+        "turn_a" => Status::TurnA,
+        "turn_b" => Status::TurnB,
+        "over" => Status::Over,
+        _ => Status::Other
+     }
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
